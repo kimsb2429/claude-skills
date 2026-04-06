@@ -1,8 +1,8 @@
 # Deep Dive
 
-A Claude Code skill for autonomous deep research. Decomposes any question into a dependency graph (DAG) of sub-questions, researches them in parallel via subagents, identifies gaps, iterates, and synthesizes a final report.
+A Claude Code skill for deep research. It breaks any question into a dependency graph (DAG) of sub-questions, researches them in parallel using subagents, finds gaps, follows up, and writes a final report.
 
-Inspired by Google's Deep Research — but runs entirely inside Claude Code with no external APIs or dependencies. Just a markdown file.
+Based on how Google's Deep Research works, but runs entirely inside Claude Code. No external APIs, no dependencies. Just one markdown file.
 
 ## How it works
 
@@ -10,34 +10,34 @@ Inspired by Google's Deep Research — but runs entirely inside Claude Code with
 Research question
     |
     v
-DAG Planning — decompose into sub-questions with dependencies
+DAG Planning - break into sub-questions with dependencies
     |
     v
-Wave 1 — launch independent questions as parallel subagents
+Wave 1 - launch independent questions as parallel subagents
     |
     v
-Wave 2+ — launch dependent questions with prior findings as context
+Wave 2+ - launch dependent questions with prior findings as context
     |
     v
-Gap Analysis — review what's missing, run 1 follow-up wave if needed
+Gap Analysis - check what's missing, run 1 follow-up wave if needed
     |
     v
-Synthesis — combine all findings into a coherent report
+Synthesis - pull all findings into one report
     |
     v
-Save — persist report as markdown in project docs
+Save - write report as markdown in project docs
 ```
 
 ### What makes it different
 
-Most research skills use a **linear pipeline** — search, then summarize. Deep Dive uses a **dependency-ordered DAG**, meaning:
+Most research skills search, then summarize. Deep Dive builds a dependency graph first:
 
-- Questions that depend on other answers wait for those answers first
-- Independent questions run simultaneously (3-6 subagents in parallel)
-- Context flows forward — later questions receive findings from earlier ones
-- The research plan adapts based on what's found, not a fixed sequence
+- Questions that depend on other answers wait for those answers
+- Independent questions run at the same time (3-6 subagents in parallel)
+- Context flows forward. Later questions get findings from earlier ones
+- The research plan adapts based on what's actually found
 
-This is the architecture Google uses for Deep Research. Among [7+ community alternatives surveyed](https://github.com/mediar-ai/skillhubz), this is the only Claude Code skill that implements true DAG-based planning.
+Out of [7+ community alternatives surveyed](https://github.com/mediar-ai/skillhubz), this is the only Claude Code skill that uses true DAG-based planning.
 
 ## Install
 
@@ -73,18 +73,18 @@ In Claude Code:
 
 ## What you get
 
-1. **DAG plan** — printed as a table before execution starts, so you can see the research strategy
-2. **Real-time progress** — task checklist at the bottom of the terminal tracks each subagent
-3. **Gap iteration** — after the first pass, identifies what's missing and runs targeted follow-ups
-4. **Final report** — synthesized markdown saved to `docs/deep-dive/` in your project directory with:
+1. **DAG plan** printed as a table before anything runs, so you see the research strategy up front
+2. **Real-time progress** via task checklist at the bottom of the terminal
+3. **Gap iteration** that catches what the first pass missed and runs targeted follow-ups
+4. **Final report** saved to `docs/deep-dive/` in your project:
    - Executive summary
-   - Themed findings (not just concatenated subagent outputs)
-   - Open questions (honest about what wasn't resolved)
+   - Findings organized by theme (not just pasted subagent outputs)
+   - Open questions where the research came up short
    - Deduplicated source list
 
 ## Example output
 
-A typical deep-dive produces a 500-2000 line report covering 4-8 sub-questions, with 15-40 cited sources, in 5-15 minutes. Reports are saved as timestamped markdown files:
+A typical run produces a 500-2000 line report covering 4-8 sub-questions, citing 15-40 sources, in 5-15 minutes. Reports save as timestamped markdown:
 
 ```
 docs/deep-dive/
@@ -95,7 +95,7 @@ docs/deep-dive/
 
 ## Requirements
 
-- Claude Code CLI (any version with Agent subagent support)
+- Claude Code CLI (any version with subagent support)
 - No external APIs, MCP servers, or dependencies
 - Works with any Claude model (Opus, Sonnet, Haiku)
 
@@ -112,7 +112,7 @@ docs/deep-dive/
 
 ## Customization
 
-The skill is a single markdown file — edit it to fit your workflow:
+It's a single markdown file. Edit it to fit your workflow:
 
 - Change the report output directory (default: `docs/deep-dive/`)
 - Adjust the max node count (default: 4-8, cap at 12)
