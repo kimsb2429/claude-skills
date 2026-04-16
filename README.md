@@ -7,6 +7,7 @@ A collection of Claude Code skills. Each skill is a markdown file you drop into 
 | Skill | Command | What it does |
 |-------|---------|-------------|
 | [deep-dive](deep-dive/) | `/deep-dive` | DAG-based deep research. Breaks questions into dependency-ordered sub-questions, runs parallel subagents, finds gaps, writes sourced reports. |
+| [news-from-discussions](news-from-discussions/) | `/news-from-discussions` | Morning briefing tailored from your past conversations and memory — checklists across your projects + a "For You" news digest based on what you've actually been thinking about, not topic tags. |
 
 ## Install
 
@@ -66,6 +67,37 @@ A typical run produces a 500-2000 line report covering 4-8 sub-questions, citing
 | Progress tracking | Task checklist | None |
 | Output | Persistent markdown report | Chat response |
 | External deps | None | Often requires MCP servers or APIs |
+
+### news-from-discussions
+
+A personal morning briefing that derives "For You" picks from **your own files** — memory, project TODOs, anything in `~/.claude/projects/*/memory/`. The hosted alternatives (ChatGPT Pulse, etc.) personalize from chat history and inboxes; this one personalizes from the structured notes you've already been writing about who you are and what you're building.
+
+Two phases:
+- **Checklists** — auto-discovers any direct subdir of `~/` containing a `TODO.md`, prints pending-first checklists per project
+- **News digest** — 6 parallel WebSearch queries: 2 personalized "For You", general news, AI & tech, your dominant niche (inferred from memory), and community buzz (HN/Reddit/X). Suggested actions get appended to project TODOs after approval.
+
+**Usage:**
+
+```
+/news-from-discussions
+```
+
+**Pairs well with [Claude Code Routines](https://www.anthropic.com/news/claude-code) for scheduled morning delivery.** Add `--out ~/brief.md` (or set `NEWS_FROM_DISCUSSIONS_OUT`) to write the briefing to a file, then wire delivery however you want:
+
+```bash
+# Send via local mail after Routines fires
+mail -s "Morning brief" you@example.com < ~/brief.md
+
+# Or push to a Slack webhook
+curl -X POST -H 'Content-type: application/json' \
+  --data "{\"text\": \"$(cat ~/brief.md)\"}" \
+  $SLACK_WEBHOOK_URL
+
+# Or commit to a private repo for cross-device read
+cd ~/briefs && git add . && git commit -m "$(date +%F)" && git push
+```
+
+**Differentiator vs. existing morning-brief tools:** cross-project TODO aggregation as the spine, and personalization derived from already-written memory rather than asking you to configure topic tags.
 
 ## Requirements
 
